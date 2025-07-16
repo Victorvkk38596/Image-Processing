@@ -7,7 +7,7 @@ output [23:0] o_data,
 input i_rd_data
 );
 
-reg [7:0] line [511:0]; //line buffer
+reg [7:0] line [511:0];
 reg [8:0] wrPntr;
 reg [8:0] rdPntr;
 
@@ -20,9 +20,9 @@ end
 always @(posedge i_clk)
 begin
     if(i_rst)
-        wrPntr <= 'd0;
+        wrPntr <= 1'd0;
     else if(i_data_valid)
-        wrPntr <= wrPntr + 'd1;
+        wrPntr <= wrPntr + 1'd1;
 end
 
 assign o_data = {line[rdPntr],line[rdPntr+1],line[rdPntr+2]};
@@ -30,9 +30,9 @@ assign o_data = {line[rdPntr],line[rdPntr+1],line[rdPntr+2]};
 always @(posedge i_clk)
 begin
     if(i_rst)
-        rdPntr <= 'd0;
+        rdPntr <= 1'd0;
     else if(i_rd_data)
-        rdPntr <= rdPntr + 'd1;
+        rdPntr <= rdPntr + 1'd1;
 end
 
 
