@@ -1,5 +1,4 @@
-//Single line buffer, will be instantiating 4 line buffers in top module
-
+//Single line buffer, will be instantiating 4 line buffers in top module. The entire design is heavily based on the RAM design generally used in Vivado.
 module lineBuffer(
 input   i_clk,
 input   i_rst,
@@ -29,11 +28,12 @@ begin
         wrPntr <= wrPntr + 1'd1;
 end
 
-//Outputs 3 contiguous image pixel in a line for the 3x3 kernel
+//Outputs 3 contiguous image pixels in a line for the 3x3 kernel
 assign o_data = {line[rdPntr],line[rdPntr+1],line[rdPntr+2]};
 
 
-//Read pointer control, similar to write pointer. Only moved by a single pixel, assuming a stride size of 1.
+//Read pointer control, similar to write pointer. Only moved by a single pixel, assuming a stride size of 1
+//Should probably parametrise the stride size in future versions.
 always @(posedge i_clk)
 begin
     if(i_rst)
