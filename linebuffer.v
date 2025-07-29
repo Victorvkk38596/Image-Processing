@@ -3,13 +3,15 @@
 module lineBuffer(
 input   i_clk,
 input   i_rst,
-input [7:0] i_data,
-input   i_data_valid,
-output [23:0] o_data,
-input i_rd_data
+input [7:0] i_data, //Byte (single pixel, grayscale from 0 - 255) will be entering the line buffer
+input   i_data_valid, //Indicates that the incoming data is valid
+output [23:0] o_data, //Kernel size is 3x3, so 3 pixels are required in one go, 8*3 = 24 bits
+input i_rd_data //Signal indicating that data needs to be read from the line buffer
 );
 
-reg [7:0] line [511:0];     //Stores a row of the 512x512 image.
+    //Wires cannot be stored as 2D arrays, only registers.
+
+reg [7:0] line [511:0];     //Memory that stores a row of the 512x512 image. 
 reg [8:0] wrPntr;
 reg [8:0] rdPntr;
 
@@ -22,7 +24,7 @@ begin
 end
 
 
-//Moving the pointer forward
+//Moving the write pointer forward
 always @(posedge i_clk)
 begin
     if(i_rst)
