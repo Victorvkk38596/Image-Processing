@@ -21,12 +21,8 @@ always @(posedge i_clk)
 begin
     if(i_data_valid)
         line[wrPntr] <= i_data;
-end
 
-
-//Moving the write pointer forward
-always @(posedge i_clk)
-begin
+    //Moving the write pointer ahead after writing into the location pointed by the wrPntr
     if(i_rst)
         wrPntr <= 1'd0;
     else if(i_data_valid)
