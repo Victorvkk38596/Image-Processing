@@ -12,7 +12,7 @@ output reg   o_convolved_data_valid
 integer i; 
 reg [7:0] kernel [8:0];  //3x3 kernel
 reg [7:0] multData[8:0]; //You could get away with using only 8 bit word size for multiplication output since the blur kernel only has ones and zeroes
-    reg [11:0] sumDataInt; //Values have been calculated accounting for worst case bit growth
+reg [11:0] sumDataInt; //Values have been calculated accounting for worst case bit growth
 reg [11:0] sumData;
 reg multDataValid;
 reg sumDataValid;
