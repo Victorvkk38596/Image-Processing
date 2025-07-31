@@ -2,12 +2,12 @@ module imageProcessTop(
 input   axi_clk,
 input   axi_reset_n,
 
-//slave interface
+//slave (DMA is the slave) interface
 input   i_data_valid,
 input [7:0] i_data,
 output  o_data_ready,
   
-//master interface
+//master (DMA is the master) interface
 output  o_data_valid,
 output [7:0] o_data,
 input   i_data_ready,
