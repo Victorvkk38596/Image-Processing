@@ -8,16 +8,16 @@ output                   o_pixel_data_valid,
 output reg               o_intr
 );
 
-reg [8:0] pixelCounter;
-reg [1:0] currentWrLineBuffer;
-reg [3:0] lineBuffDataValid;
+reg [8:0] pixelCounter; //log 512 to the base 2 bits, so that the logic to know when to move to the next line buffer is simple (check for overflow)
+reg [1:0] currentWrLineBuffer; //Points to the line buffer to which the image pixel is to be stored.
+reg [3:0] lineBuffDataValid; //Activates writing into the line buffer of choice.
 reg [3:0] lineBuffRdData;
 reg [1:0] currentRdLineBuffer;
 wire [23:0] lb0data;
 wire [23:0] lb1data;
 wire [23:0] lb2data;
 wire [23:0] lb3data;
-reg [8:0] rdCounter;
+reg [8:0] rdCounter; //Same as the pixel counter, just that this is used for the read end and then other for the writ end.
 reg rd_line_buffer;
 reg [11:0] totalPixelCounter;
 reg rdState;
@@ -27,19 +27,20 @@ localparam IDLE = 'b0,
 
 assign o_pixel_data_valid = rd_line_buffer;
 
+//Makes sure data is read from the line buffers only after at least 3/4 line buffers are completely filled.
 always @(posedge i_clk)
 begin
     if(i_rst)
         totalPixelCounter <= 0;
     else
     begin
-        if(i_pixel_data_valid & !rd_line_buffer)
+       if(i_pixel_data_valid & !rd_line_buffer) //Data is coming into the line buffer but no data will be read
             totalPixelCounter <= totalPixelCounter + 1;
-        else if(!i_pixel_data_valid & rd_line_buffer)
+               else if(!i_pixel_data_valid & rd_line_buffer) //Data is not coming into the line buffers but is being read
             totalPixelCounter <= totalPixelCounter - 1;
     end
 end
-
+//FSM that makes sure data is only read after at least 3 consecutive out of 4 line buffers are filled with new data.
 always @(posedge i_clk)
 begin
     if(i_rst)
@@ -70,7 +71,8 @@ begin
         endcase
     end
 end
-    
+
+/*A counter is used to shift from one line buffer to the next when the counter exceeds 511, that is 512 pixels are read (the current line buffer is full)*/
 always @(posedge i_clk)
 begin
     if(i_rst)
@@ -82,7 +84,7 @@ begin
     end
 end
 
-
+//A demultiplexer is implemented to move the pixel data to the respective line buffer.
 always @(posedge i_clk)
 begin
     if(i_rst)
@@ -94,7 +96,7 @@ begin
     end
 end
 
-
+//Activation of specific line buffers
 always @(*)
 begin
     lineBuffDataValid = 4'h0;
@@ -112,6 +114,7 @@ begin
     end
 end
 
+//Follows the same logic as currentWrLineBuffer to switch line buffers after reading 512 pixels
 always @(posedge i_clk)
 begin
     if(i_rst)
@@ -125,7 +128,11 @@ begin
     end
 end
 
+/*This is the combinational logic that decides which line buffers to read data from.
+Data is always read from 3 line buffers in parallel, the decision to be made is about which
+line buffer to begin reading from, the starting line buffer varies after completing a loop through 512 pixels.*/
 
+//This behaves like a MUX
 always @(*)
 begin
     case(currentRdLineBuffer)
