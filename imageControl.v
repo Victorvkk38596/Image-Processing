@@ -24,8 +24,9 @@ reg rdState;
 
 localparam IDLE = 'b0,
            RD_BUFFER = 'b1;
+//You will have valid output whenever (the same clk cycle) the rd_line_buffer is 1 as there is only combinational logic (MUX) separating the line buffers from the output port
+assign o_pixel_data_valid = rd_line_buffer; 
 
-assign o_pixel_data_valid = rd_line_buffer;
 
 //Makes sure data is read from the line buffers only after at least 3/4 line buffers are completely filled.
 always @(posedge i_clk)
