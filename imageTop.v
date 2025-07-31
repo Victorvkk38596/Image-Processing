@@ -42,7 +42,7 @@ imageControl IC(
      .o_convolved_data(convolved_data),
      .o_convolved_data_valid(convolved_data_valid)
  ); 
- 
+ //FIFO, placed after the output from conv, this acts as a buffer for output data. Helps integrate input and output ready signals better.
  outputBuffer OB (
    .wr_rst_busy(), 
    .rd_rst_busy(),  
